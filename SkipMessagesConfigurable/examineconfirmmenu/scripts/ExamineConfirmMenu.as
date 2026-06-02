@@ -5,7 +5,7 @@ package
    import flash.text.TextField;
    import flash.ui.Keyboard;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol23")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol25")]
    public class ExamineConfirmMenu extends IMenu
    {
       

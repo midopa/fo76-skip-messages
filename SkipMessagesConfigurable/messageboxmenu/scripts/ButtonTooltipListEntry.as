@@ -14,6 +14,8 @@ package
       
       private static var m_Platform:uint;
       
+      private static var m_bIsGen9:Boolean;
+      
       public var Button_mc:MovieClip;
       
       public var Text_tf:TextField;
@@ -31,6 +33,11 @@ package
       public static function set platform(param1:uint) : *
       {
          m_Platform = param1;
+      }
+      
+      public static function set bIsGen9(param1:Boolean) : *
+      {
+         m_bIsGen9 = param1;
       }
       
       private function get buttonTextField() : TextField
@@ -54,12 +61,12 @@ package
             case PlatformChangeEvent.PLATFORM_XB1:
                _loc3_ = new TextFormat("$Controller_buttons");
                this.Button_mc.IconAnimInstance.Icon_tf.setTextFormat(_loc3_);
-               this.Button_mc.IconAnimInstance.Icon_tf.text = GlobalFunc.GetButtonFontKey(param1.button);
+               this.Button_mc.IconAnimInstance.Icon_tf.text = GlobalFunc.GetButtonFontKey(param1.button,m_bIsGen9);
                break;
             case PlatformChangeEvent.PLATFORM_PS4:
                _loc3_ = new TextFormat("$Controller_buttons");
                this.Button_mc.IconAnimInstance.Icon_tf.setTextFormat(_loc3_);
-               this.Button_mc.IconAnimInstance.Icon_tf.text = GlobalFunc.GetButtonFontKey(param1.button);
+               this.Button_mc.IconAnimInstance.Icon_tf.text = GlobalFunc.GetButtonFontKey(param1.button,m_bIsGen9);
          }
          this.Text_tf.x = this.Button_mc.x + this.buttonTextField.width + this.TEXT_SPACING;
       }

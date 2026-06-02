@@ -449,6 +449,7 @@ package
                this.Tooltip_mc.gotoAndStop("List");
                this.TooltipList_mc.visible = this.m_ButtonHintsArray.length > 0;
                ButtonTooltipListEntry.platform = uiPlatform;
+               ButtonTooltipListEntry.bIsGen9 = bIsGen9;
                if(this.TooltipList_mc.visible)
                {
                   this.TooltipList_mc.listEntryClass_Inspectable = "ButtonTooltipListEntry";
