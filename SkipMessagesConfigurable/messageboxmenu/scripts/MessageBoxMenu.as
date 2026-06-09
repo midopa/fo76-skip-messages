@@ -152,7 +152,7 @@ package
             this.config = new JSONDecoder(param1.target.data,true).getValue();
             this.config.SkipDelay = this.config.SkipDelay == null || isNaN(this.config.SkipDelay) ? 25 : int(this.config.SkipDelay);
             configLoadTime = getTimer() - this.initTime;
-            this.log("Config loaded (" + configLoadTime + "ms)");
+            this.log("(m)Config loaded (" + configLoadTime + "ms)");
             if(this.config.SkipDelay > configLoadTime)
             {
                configLoadTime = this.config.SkipDelay - configLoadTime;
@@ -247,7 +247,7 @@ package
          {
             for(o in this.config.SkipCustomRegex)
             {
-               var regex:RegExp = new RegExp(o);
+               var regex:RegExp = new RegExp(o,"i");
                if(regex.test(this.bodyText))
                {
                   buttonId = int(this.config.SkipCustomRegex[o]);
@@ -266,7 +266,7 @@ package
          {
             for(o in this.config.ChangeSelection)
             {
-               regex = new RegExp(o);
+               regex = new RegExp(o,"i");
                if(regex.test(this.bodyText))
                {
                   buttonId = int(this.config.ChangeSelection[o]);
