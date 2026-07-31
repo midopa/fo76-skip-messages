@@ -10,10 +10,14 @@ package
    import Shared.GlobalFunc;
    import Shared.ResolutionDarkeners;
    import com.adobe.serialization.json.*;
+   import flash.display.DisplayObject;
+   import flash.display.DisplayObjectContainer;
    import flash.display.MovieClip;
    import flash.display.Shape;
    import flash.events.*;
    import flash.filters.*;
+   import flash.geom.Point;
+   import flash.geom.Rectangle;
    import flash.net.*;
    import flash.text.*;
    import flash.utils.*;
@@ -42,6 +46,8 @@ package
       private var TooltipList_mc:BSScrollingList;
       
       private var Tooltip_tf:TextField;
+      
+      private var m_ToolTipStartingX:Number;
       
       public var backgroundBoxHeader:MovieClip;
       
@@ -88,6 +94,7 @@ package
          this.List_mc.disableInput_Inspectable = true;
          this.DisableInputCounter = 0;
          this.Tooltip_tf.scrollV = 0;
+         this.m_ToolTipStartingX = this.Tooltip_mc.x;
          this.loadConfig();
       }
       
@@ -356,8 +363,7 @@ package
       
       public function updateMessageScrollIndicators() : void
       {
-         var _loc1_:Boolean = false;
-         _loc1_ = this.isValidTextScrollMode;
+         var _loc1_:Boolean = this.isValidTextScrollMode;
          this.BodyScrollUp_mc.visible = _loc1_ && this.Tooltip_tf.scrollV > 1;
          this.BodyScrollDown_mc.visible = _loc1_ && this.Tooltip_tf.bottomScrollV < this.Tooltip_tf.numLines;
       }
@@ -430,8 +436,38 @@ package
          }
       }
       
+      private function GetTooltipLongestWidthEntry() : TextField
+      {
+         var _loc3_:ButtonTooltipListEntry = null;
+         var _loc1_:TextField = null;
+         var _loc2_:uint = 0;
+         while(_loc2_ < this.TooltipList_mc.entryList.length)
+         {
+            _loc3_ = this.TooltipList_mc.FindClipForEntry(_loc2_) as ButtonTooltipListEntry;
+            if(_loc1_ == null || _loc3_.Text_tf.textWidth > _loc1_.textWidth)
+            {
+               _loc1_ = _loc3_.Text_tf;
+            }
+            _loc2_++;
+         }
+         return _loc1_;
+      }
+      
+      private function GetVisualCenterInTarget(param1:DisplayObject, param2:DisplayObjectContainer, param3:Number = -1) : Point
+      {
+         var _loc4_:Rectangle = param1.getBounds(param1);
+         var _loc5_:Number = param3 > 0 ? param3 : _loc4_.width;
+         var _loc6_:Point = new Point(_loc4_.x + _loc5_ * 0.5,_loc4_.y + _loc4_.height * 0.5);
+         _loc6_ = param1.localToGlobal(_loc6_);
+         return param2.globalToLocal(_loc6_);
+      }
+      
       public function InvalidateMenu() : *
       {
+         var _loc4_:TextField = null;
+         var _loc8_:Number = NaN;
+         var _loc9_:Number = NaN;
+         var _loc10_:Number = NaN;
          this.List_mc.InvalidateData();
          this.List_mc.selectedIndex = 0;
          var _loc1_:Number = this.backgroundBoxContainer_mc.width;
@@ -439,10 +475,12 @@ package
          this.Body_mc.y = _loc2_;
          this.Body_mc.x = _loc1_ / 2;
          this.List_mc.x = _loc1_ / 2;
+         this.Tooltip_mc.x = this.m_ToolTipStartingX;
          var _loc3_:Number = 0;
          _loc3_ = Number(this.Body_mc.Body_tf.textHeight);
          _loc2_ += _loc3_ + SPACING_Y_PAD;
          this.backgroundBoxHeader.height = _loc2_;
+         var _loc5_:Boolean = false;
          switch(this.m_Tag)
          {
             case "BUTTONHINTS":
@@ -459,6 +497,8 @@ package
                   this.TooltipList_mc.InvalidateData();
                   this.Tooltip_mc.y = _loc2_;
                   _loc2_ += this.TooltipList_mc.shownItemsHeight;
+                  _loc4_ = this.GetTooltipLongestWidthEntry();
+                  _loc5_ = true;
                }
                break;
             case "ACTIVATIONLIST":
@@ -496,19 +536,26 @@ package
          _loc2_ += this.List_mc.shownItemsHeight + BODY_SIZE_PAD * 0.4;
          this.List_mc.ScrollUp.x = this.List_mc.greatestWidth * -0.5 - 20;
          this.List_mc.ScrollDown.x = this.List_mc.ScrollUp.x;
-         var _loc4_:Array = [this.backgroundBoxContainer_mc,this.backgroundBoxStroke];
-         var _loc5_:uint = 0;
-         while(_loc5_ < _loc4_.length)
+         var _loc6_:Array = [this.backgroundBoxContainer_mc,this.backgroundBoxStroke];
+         var _loc7_:uint = 0;
+         while(_loc7_ < _loc6_.length)
          {
-            _loc4_[_loc5_].height = _loc2_;
-            _loc4_[_loc5_].width = _loc1_;
-            _loc5_++;
+            _loc6_[_loc7_].height = _loc2_;
+            _loc6_[_loc7_].width = _loc1_;
+            _loc7_++;
          }
          this.backgroundBoxHeader.width = _loc1_;
          stage.stageFocusRect = false;
          stage.focus = this.List_mc;
          this.x = (this.loaderInfo.width - _loc1_) / 2;
          this.y = (this.loaderInfo.height - _loc2_) / 2;
+         if(_loc5_ && Boolean(_loc4_))
+         {
+            _loc8_ = this.GetVisualCenterInTarget(this.backgroundBoxContainer_mc,this).x;
+            _loc9_ = this.GetVisualCenterInTarget(_loc4_,this,_loc4_.textWidth).x;
+            _loc10_ = this.m_ToolTipStartingX + (_loc8_ - _loc9_);
+            this.Tooltip_mc.x = _loc10_;
+         }
          this.visible = true;
       }
       
