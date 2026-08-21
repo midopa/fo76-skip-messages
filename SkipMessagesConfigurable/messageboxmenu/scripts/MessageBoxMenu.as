@@ -146,17 +146,18 @@ package
          }
       }
       
-      private function onConfigLoadError(param1:Event) : void
+      private function onConfigLoadError(e:IOErrorEvent) : void
       {
-         this.log("Config error: " + param1);
+         this.log("Config error: " + e.text);
       }
       
       private function onConfigLoaded(param1:Event) : void
       {
          var configLoadTime:int;
+         var line:uint;
          try
          {
-            this.config = new JSONDecoder(param1.target.data,true).getValue();
+            this.config = new JSONDecoder(param1.target.data,false).getValue();
             this.config.SkipDelay = this.config.SkipDelay == null || isNaN(this.config.SkipDelay) ? 25 : int(this.config.SkipDelay);
             configLoadTime = getTimer() - this.initTime;
             this.log("(m)Config loaded (" + configLoadTime + "ms)");
@@ -170,9 +171,14 @@ package
                Process();
             }
          }
-         catch(e:*)
+         catch(e:JSONParseError)
          {
-            this.log("Error parsing config " + e);
+            line = e.text.substr(0,e.location).match(/\n/g).length + 1;
+            this.log("Error parsing config: " + e.message + " in line " + line);
+         }
+         catch(e:Error)
+         {
+            this.log("Error initializing config: " + e);
          }
       }
       
