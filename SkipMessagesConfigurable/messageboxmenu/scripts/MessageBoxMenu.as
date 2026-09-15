@@ -31,6 +31,12 @@ package
       
       public static const BODY_SIZE_PAD:Number = 25;
       
+      public static const ARROW_PADDING:Number = 20;
+      
+      public static const MIN_TF_HEIGHT:Number = 50;
+      
+      public static const MAX_TF_HEIGHT:Number = 700;
+      
       public static var TAG_SCRAPTOSTASH:String = "ScrapToStash";
       
       public var Body_mc:MovieClip;
@@ -60,6 +66,8 @@ package
       private var DisableInputCounter:uint;
       
       private var MenuMode:Boolean = false;
+      
+      private var m_bOversizedTextfield:Boolean = false;
       
       private var m_Tag:String = "";
       
@@ -364,7 +372,7 @@ package
       
       public function get isValidTextScrollMode() : Boolean
       {
-         return this.m_Tag == TAG_SCRAPTOSTASH;
+         return this.m_Tag == TAG_SCRAPTOSTASH || this.m_bOversizedTextfield;
       }
       
       public function updateMessageScrollIndicators() : void
@@ -471,9 +479,11 @@ package
       public function InvalidateMenu() : *
       {
          var _loc4_:TextField = null;
-         var _loc8_:Number = NaN;
-         var _loc9_:Number = NaN;
          var _loc10_:Number = NaN;
+         var _loc11_:Number = NaN;
+         var _loc12_:Number = NaN;
+         var _loc13_:Number = NaN;
+         var _loc14_:Number = NaN;
          this.List_mc.InvalidateData();
          this.List_mc.selectedIndex = 0;
          var _loc1_:Number = this.backgroundBoxContainer_mc.width;
@@ -487,6 +497,7 @@ package
          _loc2_ += _loc3_ + SPACING_Y_PAD;
          this.backgroundBoxHeader.height = _loc2_;
          var _loc5_:Boolean = false;
+         this.m_bOversizedTextfield = false;
          switch(this.m_Tag)
          {
             case "BUTTONHINTS":
@@ -527,28 +538,29 @@ package
                if(this.Tooltip_tf.visible)
                {
                   this.Tooltip_mc.y = _loc2_;
-                  if(this.isValidTextScrollMode)
-                  {
-                     _loc2_ += Math.min(GlobalFunc.getTextfieldSize(this.Tooltip_tf),this.Tooltip_tf.height) + SPACING_Y_PAD;
-                  }
-                  else
-                  {
-                     _loc2_ += GlobalFunc.getTextfieldSize(this.Tooltip_tf) + SPACING_Y_PAD;
-                  }
+                  _loc10_ = Math.max(this.Tooltip_tf.textHeight,MIN_TF_HEIGHT) + SPACING_Y_PAD;
+                  _loc11_ = Math.min(_loc10_,MAX_TF_HEIGHT);
+                  this.Tooltip_tf.height = _loc11_;
+                  _loc2_ += _loc11_ + SPACING_Y_PAD;
+                  this.m_bOversizedTextfield = _loc10_ > MAX_TF_HEIGHT;
                }
          }
          _loc2_ += SPACING_Y_PAD * 4;
          this.List_mc.y = _loc2_;
          _loc2_ += this.List_mc.shownItemsHeight + BODY_SIZE_PAD * 0.4;
-         this.List_mc.ScrollUp.x = this.List_mc.greatestWidth * -0.5 - 20;
-         this.List_mc.ScrollDown.x = this.List_mc.ScrollUp.x;
-         var _loc6_:Array = [this.backgroundBoxContainer_mc,this.backgroundBoxStroke];
-         var _loc7_:uint = 0;
-         while(_loc7_ < _loc6_.length)
+         var _loc6_:Number = this.List_mc.greatestWidth * -0.5 - ARROW_PADDING;
+         this.List_mc.ScrollUp.x = _loc6_;
+         this.List_mc.ScrollDown.x = _loc6_;
+         var _loc7_:Number = this.Tooltip_mc.x + (this.Tooltip_mc.width - this.Tooltip_tf.textWidth) * 0.5 - ARROW_PADDING;
+         this.BodyScrollUp_mc.x = _loc7_;
+         this.BodyScrollDown_mc.x = _loc7_;
+         var _loc8_:Array = [this.backgroundBoxContainer_mc,this.backgroundBoxStroke];
+         var _loc9_:uint = 0;
+         while(_loc9_ < _loc8_.length)
          {
-            _loc6_[_loc7_].height = _loc2_;
-            _loc6_[_loc7_].width = _loc1_;
-            _loc7_++;
+            _loc8_[_loc9_].height = _loc2_;
+            _loc8_[_loc9_].width = _loc1_;
+            _loc9_++;
          }
          this.backgroundBoxHeader.width = _loc1_;
          stage.stageFocusRect = false;
@@ -557,12 +569,13 @@ package
          this.y = (this.loaderInfo.height - _loc2_) / 2;
          if(_loc5_ && Boolean(_loc4_))
          {
-            _loc8_ = this.GetVisualCenterInTarget(this.backgroundBoxContainer_mc,this).x;
-            _loc9_ = this.GetVisualCenterInTarget(_loc4_,this,_loc4_.textWidth).x;
-            _loc10_ = this.m_ToolTipStartingX + (_loc8_ - _loc9_);
-            this.Tooltip_mc.x = _loc10_;
+            _loc12_ = this.GetVisualCenterInTarget(this.backgroundBoxContainer_mc,this).x;
+            _loc13_ = this.GetVisualCenterInTarget(_loc4_,this,_loc4_.textWidth).x;
+            _loc14_ = this.m_ToolTipStartingX + (_loc12_ - _loc13_);
+            this.Tooltip_mc.x = _loc14_;
          }
          this.visible = true;
+         this.updateMessageScrollIndicators();
       }
       
       private function initDisableInputCounter(param1:Event) : *
