@@ -282,7 +282,7 @@ package
                   var checklist:Dictionary = new Dictionary();
                   for each(var n in legCfg.Checklist)
                   {
-                     checklist[normalizeModName(n)] = true;
+                     checklist[normalizeModName(n, modStars)] = true;
                   }
                   for(var m in mods)
                   {
@@ -384,7 +384,7 @@ package
          return this.ConfirmSubtitle_mc.ConfirmSubtitle_tf.text;
       }
 
-      private function normalizeModName(s: String) : String
+      private function normalizeModName(s: String, modStar: RegExp) : String
       {
          while (s.search(SYMBOLS) != -1) {
             s = s.replace(SYMBOLS, "");
@@ -402,7 +402,7 @@ package
             {
                continue;
             }
-            x.push(normalizeModName(c));
+            x.push(normalizeModName(c, modStar));
          }
          return x;
       }
