@@ -21,6 +21,7 @@
 
 			// Don't skip the components view if a legendary has any of these mods.
 			// Can be useful if you want to double check an item for possibly up-rolling to better gear.
+			// Matches are case-insensitive and ignore symbols like apostrophes and periods.
 			// "Checklist": [ "Furious", "Pin-Pointer's", "Pounder's" ],
 
 			// Skip if the item has learnable legendary mods (this ignores mods like normal weapon/armor mods).

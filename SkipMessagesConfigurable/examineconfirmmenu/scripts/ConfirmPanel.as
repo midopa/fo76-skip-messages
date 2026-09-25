@@ -260,7 +260,7 @@ package
                chanceToGet.text = "$ChanceToGet";
                var chanceToLearn:TextField = new TextField();
                chanceToLearn.text = "$ChanceToLearn";
-               var modStars:RegExp = new RegExp("^" + dummy.text + "+\s+");
+               var modStars:RegExp = new RegExp("^" + dummy.text + "*\\s*");
                var learnable:Vector.<String> = new Vector.<String>();
                var mods:Vector.<String> = new Vector.<String>();
                for each(var e in this.m_Entries)
@@ -284,11 +284,11 @@ package
                   {
                      checklist[normalizeModName(n, modStars)] = true;
                   }
-                  for(var m in mods)
+                  for each(var m in mods)
                   {
                      if(checklist[m] == true)
                      {
-                        this.log("Don't skip: Legendary mod with in the checklist " + m);
+                        this.log("Don't skip: Legendary mod in the checklist " + m);
                         return;
                      }
                   }
