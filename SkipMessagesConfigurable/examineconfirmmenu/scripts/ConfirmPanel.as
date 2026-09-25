@@ -282,12 +282,9 @@ package
                   var checklist:Dictionary = new Dictionary();
                   for each(var n in legCfg.Checklist)
                   {
-                     while (n.search(SYMBOLS) != -1) {
-                        n = n.replace(SYMBOLS, "");
-                     }
-                     checklist[n.toLowerCase()] = true;
+                     checklist[normalizeModName(n)] = true;
                   }
-                  for each(var m in mods)
+                  for(var m in mods)
                   {
                      if(checklist[m] == true)
                      {
@@ -387,6 +384,14 @@ package
          return this.ConfirmSubtitle_mc.ConfirmSubtitle_tf.text;
       }
 
+      private function normalizeModName(s: String) : String
+      {
+         while (s.search(SYMBOLS) != -1) {
+            s = s.replace(SYMBOLS, "");
+         }
+         return s.replace(modStar, "").toLowerCase();
+      }
+
       // From an component entry, parse out legendary mod names.
       private function parseMods(entry: ConfirmPanelComponentSourceEntry, modStar: RegExp) : Vector.<String>
       {
@@ -397,10 +402,7 @@ package
             {
                continue;
             }
-            while (c.search(SYMBOLS) != -1) {
-               c = c.replace(SYMBOLS, "");
-            }
-            x.push(c.replace(modStar, "").toLowerCase());
+            x.push(normalizeModName(c));
          }
          return x;
       }
